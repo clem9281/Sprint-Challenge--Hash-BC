@@ -24,9 +24,11 @@ def proof_of_work(last_proof):
     start = timer()
 
     print("Searching for next proof")
-    proof = 0
+    proof = 910000
     #  TODO: Your code here
-
+    last_hash = hashlib.sha256(f"{last_proof}".encode()).hexdigest()
+    while not valid_proof(last_hash, proof):
+        proof += 22
     print("Proof found: " + str(proof) + " in " + str(timer() - start))
     return proof
 
@@ -38,9 +40,13 @@ def valid_proof(last_hash, proof):
 
     IE:  last_hash: ...AE9123456, new hash 123456888...
     """
-
     # TODO: Your code here!
-    pass
+    guess_hash = hashlib.sha256(f"{proof}".encode()).hexdigest()
+    if guess_hash[:6] == last_hash[-6:]:
+        print(last_hash[-6:], guess_hash[:6])
+        return True
+    else: 
+        return False
 
 
 if __name__ == '__main__':
@@ -51,7 +57,8 @@ if __name__ == '__main__':
         node = "https://lambda-coin.herokuapp.com/api"
 
     coins_mined = 0
-
+    # totals = requests.get(url=node + "/totals")
+    # print(totals.json())
     # Load or create ID
     f = open("my_id.txt", "r")
     id = f.read()
@@ -76,5 +83,10 @@ if __name__ == '__main__':
         if data.get('message') == 'New Block Forged':
             coins_mined += 1
             print("Total coins mined: " + str(coins_mined))
+            break
         else:
-            print(data.get('message'))
+            # print(data.get('message'))
+            print(data)
+            break
+    # totals = requests.get(url=node + "/totals")
+    # print(totals.json())
